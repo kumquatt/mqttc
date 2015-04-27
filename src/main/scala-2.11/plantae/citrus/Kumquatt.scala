@@ -1,6 +1,6 @@
 package plantae.citrus
 
-class Kumquatt extends App {
+object Kumquatt extends App {
   println("Hello World")
 
 }
