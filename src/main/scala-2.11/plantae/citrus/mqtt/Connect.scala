@@ -6,3 +6,9 @@ object Connect {
     println("from mqtt client")
   }
 }
+
+object Mqttc {
+  def printSome: Unit = {
+    println("adsfasfsas")
+  }
+}
