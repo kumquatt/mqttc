@@ -1,4 +1,4 @@
-package plantae.citrus.mqtt
+package plantae.citrus.mqttclient.mqtt
 
 object Connect {
 
