@@ -5,7 +5,7 @@ import scodec.bits._
 import scodec.codecs._
 
 package object packet {
-  val mqisdpBitvector: BitVector = BitVector("MQIsdp".getBytes())
+  val mqisdpBitvector: BitVector = BitVector("MQTT".getBytes())
 
   val dupCodec = bool
   val qosCodec = uint2
