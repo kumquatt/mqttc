@@ -3,8 +3,9 @@ package plantae.citrus.mqtt.packet
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import plantae.citrus.mqtt.dto.{BYTE, INT, STRING}
+import plantae.citrus.mqtt.dto.{ControlPacketType, BYTE, INT, STRING}
 import plantae.citrus.mqttclient.mqtt.dto.connect.{CONNACK, Will, CONNECT}
+import plantae.citrus.mqttclient.mqtt.dto.ping.PINGREQ
 import scodec.Attempt.{Successful, Failure}
 import scodec.{Codec, DecodeResult, SizeBound}
 import scodec.bits._
@@ -51,6 +52,15 @@ class PacketTest extends FunSuite {
 
     assert(connack.require.value.asInstanceOf[ConnAckPacket].sessionPresentFlag === true)
     assert(connack.require.value.asInstanceOf[ConnAckPacket].returnCode === 1)
+  }
+
+  test("PingReq encode/decode Test with dto") {
+//    val pingreqByDto = PINGREQ
+//    val pingreqByPacket = PingReqPacket(FixedHeader())
+//
+//    val a = pingreqByDto.encode
+//    assert(Codec[Packet].encode(pingreqByPacket).require === BitVector(pingreqByDto.encode))
+
   }
 
   test("Remaining Length encode Test") {
