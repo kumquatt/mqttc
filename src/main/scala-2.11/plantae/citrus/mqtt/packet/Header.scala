@@ -15,7 +15,7 @@ case class ConnectVariableHeader(
                                   willQoS: Int,
                                   willFlag: Boolean,
                                   cleanSession: Boolean,
-                                  keepAliveTimer: Int
+                                  keepAliveTime: Int
                                   )
 
 

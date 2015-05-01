@@ -19,18 +19,18 @@ class PacketTest extends FunSuite {
     val connectVariableHeader = ConnectVariableHeader(false, false, false, 0, false, true, 60)
     val connect1ByPacket = Codec[Packet].encode(ConnectPacket(fixedHeader, connectVariableHeader, "client1", None, None,None, None)).require
 
-
-    println(BitVector("MQTT".getBytes()))
-    println(BitVector(connect1ByDto))
-    println(connect1ByPacket)
+    assert(connect1ByPacket === BitVector(connect1ByDto))
   }
 
   test("Connect decode Test with dto") {
+    val connect1ByDto = CONNECT(STRING("client1"), true, None, None, INT(60)).encode
+    val connect = Codec[Packet].decode(BitVector(connect1ByDto))
 
-  }
+    assert(connect.isSuccessful === true)
+    assert(connect.require.value.isInstanceOf[ConnectPacket] === true)
 
-  test("Connect Test") {
-
+    assert(connect.require.value.asInstanceOf[ConnectPacket].clientId === "client1")
+    assert(connect.require.value.asInstanceOf[ConnectPacket].variableHeader.keepAliveTime === 60)
   }
 
   test("Remaining Length encode Test") {

@@ -5,7 +5,9 @@ import scodec.bits._
 import scodec.codecs._
 
 package object packet {
+  // MQTT 3.1.1 protocol name : MQTT (uint16, utf8)
   val protocolName: BitVector = variableSizeBytes(uint16, utf8).encode("MQTT").require
+  // MQTT 3.1.1 protocol level : 4 (uint8)
   val protocolLevel: BitVector = uint8.encode(4).require
 
   val dupCodec = bool

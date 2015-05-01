@@ -13,9 +13,9 @@ case class ConnectPacket(
                           fixedHeader: FixedHeader,
                           variableHeader: ConnectVariableHeader,
                           clientId: String,
-                          topic: Option[String],
-                          message: Option[String],
-                          user: Option[String],
+                          willTopic: Option[String],
+                          willMessage: Option[String],
+                          userName: Option[String],
                           password: Option[String]
                           ) extends Packet
 object ConnectPacket {
