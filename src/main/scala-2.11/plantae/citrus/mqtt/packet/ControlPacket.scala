@@ -36,7 +36,6 @@ object ConnectPacket {
 
 case class ConnAckPacket(
                           fixedHeader: FixedHeader,
-                          connectAcknowledge: Int,
                           sessionPresentFlag: Boolean,
                           returnCode: Int
                           ) extends Packet
@@ -46,7 +45,7 @@ object ConnAckPacket {
     fixedHeaderCodec ::
       variableSizeBytes(
         remainingLengthCodec,
-        connectAcknowledgeCodec ::
+        connectAcknowledgeCodec :~>:
           sessionPresentFlagCodec ::
           returnCodeCodec
       )).as[ConnAckPacket]

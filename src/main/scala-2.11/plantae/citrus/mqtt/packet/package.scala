@@ -22,7 +22,7 @@ package object packet {
   val willFlagCodec = bool
   val cleanSessionCodec = bool
   val keepAliveCodec = uint16
-  val connectAcknowledgeCodec = uint(7)
+  val connectAcknowledgeCodec = constant(bin"0000000")
   val sessionPresentFlagCodec = bool
   val clientIdCodec = variableSizeBytes(uint16, utf8)
   val topicCodec = variableSizeBytes(uint16, utf8)

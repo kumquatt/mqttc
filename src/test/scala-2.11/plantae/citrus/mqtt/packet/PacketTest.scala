@@ -3,8 +3,8 @@ package plantae.citrus.mqtt.packet
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import plantae.citrus.mqtt.dto.{INT, STRING}
-import plantae.citrus.mqttclient.mqtt.dto.connect.{Will, CONNECT}
+import plantae.citrus.mqtt.dto.{BYTE, INT, STRING}
+import plantae.citrus.mqttclient.mqtt.dto.connect.{CONNACK, Will, CONNECT}
 import scodec.Attempt.{Successful, Failure}
 import scodec.{Codec, DecodeResult, SizeBound}
 import scodec.bits._
@@ -31,6 +31,26 @@ class PacketTest extends FunSuite {
 
     assert(connect.require.value.asInstanceOf[ConnectPacket].clientId === "client1")
     assert(connect.require.value.asInstanceOf[ConnectPacket].variableHeader.keepAliveTime === 60)
+  }
+
+  test("Conack encode Test with dto") {
+    val connackByDto = CONNACK(true, BYTE(0)).encode
+
+    val fh = FixedHeader()
+    val connackByPacket = Codec[Packet].encode(ConnAckPacket(fh, true, 0)).require
+
+    assert(connackByPacket === BitVector(connackByDto))
+  }
+
+  test("Conack decode Test with dto") {
+    val conackByDto = CONNACK(true, BYTE(1)).encode
+    val connack = Codec[Packet].decode(BitVector(conackByDto))
+
+    assert(connack.isSuccessful === true)
+    assert(connack.require.value.isInstanceOf[ConnAckPacket] === true)
+
+    assert(connack.require.value.asInstanceOf[ConnAckPacket].sessionPresentFlag === true)
+    assert(connack.require.value.asInstanceOf[ConnAckPacket].returnCode === 1)
   }
 
   test("Remaining Length encode Test") {
