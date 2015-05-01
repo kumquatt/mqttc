@@ -20,6 +20,7 @@ class PacketTest extends FunSuite {
     val connect1ByPacket = Codec[Packet].encode(ConnectPacket(fixedHeader, connectVariableHeader, "client1", None, None,None, None)).require
 
 
+    println(BitVector("MQTT".getBytes()))
     println(BitVector(connect1ByDto))
     println(connect1ByPacket)
   }

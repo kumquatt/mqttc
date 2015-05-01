@@ -5,7 +5,7 @@ import scodec.bits._
 import scodec.codecs._
 
 package object packet {
-  val mqisdpBitvector: BitVector = BitVector("MQTT".getBytes())
+  val protocolName: BitVector = variableSizeBytes(uint16, utf8).encode("MQTT").require
 
   val dupCodec = bool
   val qosCodec = uint2
@@ -36,7 +36,7 @@ package object packet {
 
   val fixedHeaderCodec = (dupCodec :: qosCodec :: retainCodec).as[FixedHeader]
   val connectVariableHeaderCodec = (
-    constant(mqisdpBitvector) :~>:
+    constant(protocolName) :~>:
       userNameFlagCodec ::
       passwordFlagCodec ::
       willRetainCodec ::
