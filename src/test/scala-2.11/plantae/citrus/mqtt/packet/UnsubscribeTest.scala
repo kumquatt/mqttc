@@ -3,10 +3,8 @@ package plantae.citrus.mqtt.packet
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import plantae.citrus.mqtt.dto.{STRING, INT}
-import plantae.citrus.mqttclient.mqtt.dto.unsubscribe.{UNSUBACKDecoder, UNSUBACK, UNSUBSCRIBEDecoder, UNSUBSCRIBE}
-import scodec.{DecodeResult, Codec}
 import scodec.bits._
+import scodec.{Codec, DecodeResult}
 
 @RunWith(classOf[JUnitRunner])
 class UnsubscribeTest extends FunSuite {

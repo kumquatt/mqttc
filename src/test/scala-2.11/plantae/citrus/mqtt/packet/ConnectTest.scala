@@ -3,11 +3,8 @@ package plantae.citrus.mqtt.packet
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import plantae.citrus.mqtt.dto.{INT, STRING}
-import plantae.citrus.mqttclient.mqtt.dto.connect._
 import scodec.Codec
-import scodec.bits.BitVector
-import scodec.bits._
+import scodec.bits.{BitVector, _}
 
 
 @RunWith(classOf[JUnitRunner])
@@ -28,7 +25,7 @@ class ConnectTest extends FunSuite {
     val connectPacket2 = Codec[Packet].encode(ConnectPacket(fh, cvh2, "client_id", None, None, None, None))
 
     assert(connectPacket2.isSuccessful == true)
-    assert(connectPacket2.require === BitVector( Array[Byte](16, 21, 0, 4, 77, 81, 84, 84, 4, 2, 0, 60, 0, 9, 99, 108, 105, 101, 110, 116,
+    assert(connectPacket2.require === BitVector(Array[Byte](16, 21, 0, 4, 77, 81, 84, 84, 4, 2, 0, 60, 0, 9, 99, 108, 105, 101, 110, 116,
       95, 105, 100)))
 
   }
@@ -92,7 +89,7 @@ class ConnectTest extends FunSuite {
     assert(min_will.willMessage === Some(will_message))
   }
 
-  test ("Connack encode test") {
+  test("Connack encode test") {
     val fh = FixedHeader()
     val connack = Codec[Packet].encode(ConnAckPacket(fh, true, 1))
 

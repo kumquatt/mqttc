@@ -3,12 +3,11 @@ package plantae.citrus.mqtt.packet
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import plantae.citrus.mqtt.dto.{ControlPacketType, BYTE, INT, STRING}
-import plantae.citrus.mqttclient.mqtt.dto.connect.{CONNACK, Will, CONNECT}
-import plantae.citrus.mqttclient.mqtt.dto.ping.PINGREQ
-import scodec.Attempt.{Successful, Failure}
-import scodec.{Codec, DecodeResult, SizeBound}
+import plantae.citrus.mqtt.dto.{BYTE, INT, STRING}
+import plantae.citrus.mqttclient.mqtt.dto.connect.{CONNACK, CONNECT}
+import scodec.Attempt.{Failure, Successful}
 import scodec.bits._
+import scodec.{Codec, DecodeResult, SizeBound}
 
 @RunWith(classOf[JUnitRunner])
 class PacketTest extends FunSuite {
@@ -18,7 +17,7 @@ class PacketTest extends FunSuite {
 
     val fixedHeader = FixedHeader()
     val connectVariableHeader = ConnectVariableHeader(false, false, false, 0, false, true, 60)
-    val connect1ByPacket = Codec[Packet].encode(ConnectPacket(fixedHeader, connectVariableHeader, "client1", None, None,None, None)).require
+    val connect1ByPacket = Codec[Packet].encode(ConnectPacket(fixedHeader, connectVariableHeader, "client1", None, None, None, None)).require
 
     assert(connect1ByPacket === BitVector(connect1ByDto))
   }
@@ -55,11 +54,11 @@ class PacketTest extends FunSuite {
   }
 
   test("PingReq encode/decode Test with dto") {
-//    val pingreqByDto = PINGREQ
-//    val pingreqByPacket = PingReqPacket(FixedHeader())
-//
-//    val a = pingreqByDto.encode
-//    assert(Codec[Packet].encode(pingreqByPacket).require === BitVector(pingreqByDto.encode))
+    //    val pingreqByDto = PINGREQ
+    //    val pingreqByPacket = PingReqPacket(FixedHeader())
+    //
+    //    val a = pingreqByDto.encode
+    //    assert(Codec[Packet].encode(pingreqByPacket).require === BitVector(pingreqByDto.encode))
 
   }
 

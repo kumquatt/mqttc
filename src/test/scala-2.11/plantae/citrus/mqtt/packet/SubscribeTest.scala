@@ -3,13 +3,11 @@ package plantae.citrus.mqtt.packet
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import plantae.citrus.mqtt.dto.{BYTE, STRING, INT}
-import plantae.citrus.mqttclient.mqtt.dto.subscribe._
-import scodec.{DecodeResult, Codec}
 import scodec.bits._
+import scodec.{Codec, DecodeResult}
 
 @RunWith(classOf[JUnitRunner])
-class SubscribeTest extends FunSuite{
+class SubscribeTest extends FunSuite {
 
   test("encode/decode test of SubscribePacket") {
     val fh = FixedHeader()
@@ -33,7 +31,7 @@ class SubscribeTest extends FunSuite{
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(subscribePacket, bin""))
 
-    val subscribe : SubscribePacket = packet.require.value.asInstanceOf[SubscribePacket]
+    val subscribe: SubscribePacket = packet.require.value.asInstanceOf[SubscribePacket]
 
     assert(subscribe.packetId === 40293)
     assert(subscribe.topicFilter === topicFilter)

@@ -3,8 +3,8 @@ package plantae.citrus.mqtt.packet
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import scodec.{DecodeResult, Codec}
 import scodec.bits._
+import scodec.{Codec, DecodeResult}
 
 @RunWith(classOf[JUnitRunner])
 class DisconnectTest extends FunSuite {

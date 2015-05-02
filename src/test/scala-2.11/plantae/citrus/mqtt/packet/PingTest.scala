@@ -3,14 +3,12 @@ package plantae.citrus.mqtt.packet
 import org.junit.runner.RunWith
 import org.scalatest.FunSuite
 import org.scalatest.junit.JUnitRunner
-import plantae.citrus.mqtt.dto.ControlPacketType
-import plantae.citrus.mqttclient.mqtt.dto.ping.{PINGRESPDecoder, PINGRESP, PINGREQDecoder, PINGREQ}
-import scodec.{DecodeResult, Codec}
 import scodec.bits._
+import scodec.{Codec, DecodeResult}
 
 @RunWith(classOf[JUnitRunner])
-class PingTest extends FunSuite{
-  test("encode/decode PingReq"){
+class PingTest extends FunSuite {
+  test("encode/decode PingReq") {
     val fh = FixedHeader()
     val pingReq = PingReqPacket(fh)
 
@@ -18,7 +16,7 @@ class PingTest extends FunSuite{
     assert(Codec[Packet].encode(pingReq).require.bytes.size === 2)
   }
 
-  test("encode/decode PingResp"){
+  test("encode/decode PingResp") {
     val fh = FixedHeader()
     val pingResp = PingRespPacket(fh)
 
