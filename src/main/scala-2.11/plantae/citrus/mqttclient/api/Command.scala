@@ -1,8 +1,6 @@
 package plantae.citrus.mqttclient.api
 
-import plantae.citrus.mqtt.packet.{ConnectPacket, ConnectVariableHeader, ControlPacket, FixedHeader}
-import scodec.Codec
-import scodec.bits.{ByteVector, BitVector}
+import scodec.bits.ByteVector
 
 sealed trait MqttClientRequest
 
@@ -14,15 +12,16 @@ case class TopicQosPair(topicName : String, qos : Int) {
 }
 case class Topic(topicName : String)
 
-case class Connect(clientId: String,
+case class ConnectOption(clientId: String,
                    cleanSession: Boolean,
                    will: Option[Will] = None,
                    userName: Option[String] = None,
                    password: Option[String] = None,
                    keepAlive: Int) extends MqttClientRequest {
-  assert(keepAlive >= 0 && keepAlive < 65536, "KeepAlive should be 0 ~ 655535")
+//  assert(keepAlive >= 0 && keepAlive < 65536, "KeepAlive should be 0 ~ 655535")
 //  assert(!userName.isDefined && password.isDefined, "Password must defined with userName")
 }
+case class Connect(clientId: String = "", keepAlive: Int = 0) extends MqttClientRequest
 case object Disconnect extends MqttClientRequest
 case object Status extends MqttClientRequest
 case class Publish(topic: String,
@@ -40,9 +39,10 @@ case class Subscribe(topics: List[TopicQosPair], packetId: Int) extends MqttClie
 case class Unsubscribe(topics: List[Topic], packetId: Int) extends MqttClientRequest {
   // assert check packetId
 }
+case object PingResq extends MqttClientRequest
 
 case class TopicResult(qos: Int) {
-  // assert qos must 0 ~ 2 or 0x80
+  // qos must 0 ~ 2 or 0x80
 }
 sealed trait MqttClientResponse
 
@@ -53,16 +53,37 @@ case class Published(packetId: Int) extends MqttClientResponse
 case class MessageArrived(topic: String, payload: ByteVector) extends MqttClientResponse
 case class Subscribed(topicResult: List[TopicResult], packetId: Int) extends MqttClientResponse
 case class Unsubscribed(packetId: Int) extends MqttClientResponse
-
-case object Error extends MqttClientResponse
+case object PingResp extends MqttClientResponse
 
 sealed trait ConnectionFailureReason
-case object ServerNotResponding extends ConnectionFailureReason
-case object BadProtocolVersion extends ConnectionFailureReason
-case object IdentifierRejected extends ConnectionFailureReason
-case object ServerUnavailable extends ConnectionFailureReason
-case object BadUsernameOrPassword extends ConnectionFailureReason
-case object NotAuthorized extends ConnectionFailureReason
+case object ServerNotResponding extends ConnectionFailureReason {
+  override def toString : String = {
+    "Server not responding"
+  }
+}
 
-sealed trait ErrorReason
-case object NotConnected extends ErrorReason
+case object BadProtocolVersion extends ConnectionFailureReason {
+  override def toString : String = {
+    "Bad protocol version"
+  }
+}
+case object IdentifierRejected extends ConnectionFailureReason {
+  override def toString : String = {
+    "Identifier rejected"
+  }
+}
+case object ServerUnavailable extends ConnectionFailureReason {
+  override def toString : String = {
+    "Server unavailable"
+  }
+}
+case object BadUsernameOrPassword extends ConnectionFailureReason {
+  override def toString : String = {
+    "Bad username or password"
+  }
+}
+case object NotAuthorized extends ConnectionFailureReason {
+  override def toString : String = {
+    "Not authorized"
+  }
+}
