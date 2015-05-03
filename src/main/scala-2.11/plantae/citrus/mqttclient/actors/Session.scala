@@ -61,6 +61,10 @@ class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor {
           val publishPacket = PublishPacket(FixedHeader(), p.topic, None, p.payload)
           connection ! Write(ByteString(Codec[ControlPacket].encode(publishPacket).require.toByteArray))
         }
+        case PingReq => {
+          val pingPacket = PingReqPacket()
+          connection ! Write(ByteString(Codec[ControlPacket].encode(pingPacket).require.toByteArray))
+        }
       }
     }
     case CommandFailed(w: Write) =>
@@ -87,7 +91,8 @@ class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor {
             listener ! Unsubscribed(u.packetId)
           case p: PublishPacket =>
             listener ! MessageArrived(p.topic, p.payload)
-
+          case x =>
+            println(x)
         }
       } else {
         println("something wrong!!")

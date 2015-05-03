@@ -39,7 +39,7 @@ case class Subscribe(topics: List[TopicQosPair], packetId: Int) extends MqttClie
 case class Unsubscribe(topics: List[Topic], packetId: Int) extends MqttClientRequest {
   // assert check packetId
 }
-case object PingResq extends MqttClientRequest
+case object PingReq extends MqttClientRequest
 
 case class TopicResult(qos: Int) {
   // qos must 0 ~ 2 or 0x80

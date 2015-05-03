@@ -19,16 +19,18 @@ object KumquattClient extends App {
 
 //  system.actorOf(Props[SomeActor]) ! "CONNECT"
 
-  val mqttclient = system.actorOf(MqttClient.props("broker.mqtt-dashboard.com", 1883, "wonsuk1111"))
+  Range(1,2000).foreach(
+    x => {
+      val clientid = "wonsuk_" + x
+      val mqttclient = system.actorOf(MqttClient.props("broker.mqtt-dashboard.com", 1883, clientid,3600))
+      mqttclient ! Connect
+      Thread.sleep(100)
+    }
+  )
 
-  mqttclient ! Connect
+//  mqttclient ! Subscribe(List(TopicQosPair("a/b", 0)), 1)
+//  mqttclient ! Publish("a/b", ByteVector("test111".getBytes),0,None, false)
 
-  Thread.sleep(3000)
-
-  println("1111")
-  mqttclient ! Subscribe(List(TopicQosPair("a/b", 0)), 1)
-  mqttclient ! Publish("a/b", ByteVector("test111".getBytes),0,None, false)
-  println("2222")
 }
 //
 //class SomeActor extends Actor {
