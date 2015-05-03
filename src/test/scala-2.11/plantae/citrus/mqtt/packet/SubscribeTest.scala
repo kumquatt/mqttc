@@ -14,7 +14,7 @@ class SubscribeTest extends FunSuite {
     val topicFilter = List(("testTopic", 0))
     val subscribePacket = SubscribePacket(fh, 100, topicFilter)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(subscribePacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(subscribePacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(subscribePacket, bin""))
@@ -26,7 +26,7 @@ class SubscribeTest extends FunSuite {
     val topicFilter = List(("topic/1", 0), ("topic/2", 1), ("topic/3", 2), ("topic/4", 0))
     val subscribePacket = SubscribePacket(fh, 40293, topicFilter)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(subscribePacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(subscribePacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(subscribePacket, bin""))
@@ -43,7 +43,7 @@ class SubscribeTest extends FunSuite {
     val topicFilter = List(0, 1, 2, 80)
     val subackPakcet = SubAckPacket(fh, 40293, topicFilter)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(subackPakcet).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(subackPakcet).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(subackPakcet, bin""))
@@ -55,7 +55,7 @@ class SubscribeTest extends FunSuite {
     val topicFilter = List(0, 1, 2, 80)
     val subackPakcet = SubAckPacket(fh, 40293, topicFilter)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(subackPakcet).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(subackPakcet).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(subackPakcet, bin""))

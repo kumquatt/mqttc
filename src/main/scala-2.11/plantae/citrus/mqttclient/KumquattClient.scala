@@ -2,13 +2,11 @@ package plantae.citrus.mqttclient
 
 import java.net.InetSocketAddress
 
-import akka.actor.Actor.Receive
-import akka.actor.{ActorSystem, Actor, Props, ActorRef}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.io.{IO, Tcp}
 import akka.util.ByteString
 
 object KumquattClient extends App {
-  println("Hello World")
   val system = ActorSystem()
 
   val addr = new InetSocketAddress("10.202.32.42", 8888)
@@ -30,6 +28,7 @@ object MqttClient {
 }
 
 class MqttClient(remote: InetSocketAddress, listener: ActorRef) extends Actor {
+
   import Tcp._
   import context.system
 
@@ -37,18 +36,18 @@ class MqttClient(remote: InetSocketAddress, listener: ActorRef) extends Actor {
 
   def receive = notConnected
 
-  private def notConnected : Receive = {
+  private def notConnected: Receive = {
     case CommandFailed(_: Connect) =>
       listener ! "connect failed"
       context stop self
 
-    case c @ Connected(remote, local) =>
+    case c@Connected(remote, local) =>
       listener ! c
       sender ! Register(self)
       context become connected
   }
 
-  private def connected : Receive = {
+  private def connected: Receive = {
     case data: ByteString =>
       sender ! Write(data)
     case CommandFailed(w: Write) =>

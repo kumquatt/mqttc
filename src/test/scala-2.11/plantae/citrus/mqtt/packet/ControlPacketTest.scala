@@ -10,7 +10,7 @@ import scodec.bits._
 import scodec.{Codec, DecodeResult, SizeBound}
 
 @RunWith(classOf[JUnitRunner])
-class PacketTest extends FunSuite {
+class ControlPacketTest extends FunSuite {
 
 
 

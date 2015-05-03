@@ -12,16 +12,16 @@ class PingTest extends FunSuite {
     val fh = FixedHeader()
     val pingReq = PingReqPacket(fh)
 
-    assert(Codec[Packet].decode(Codec[Packet].encode(pingReq).require).require === DecodeResult(pingReq, bin""))
-    assert(Codec[Packet].encode(pingReq).require.bytes.size === 2)
+    assert(Codec[ControlPacket].decode(Codec[ControlPacket].encode(pingReq).require).require === DecodeResult(pingReq, bin""))
+    assert(Codec[ControlPacket].encode(pingReq).require.bytes.size === 2)
   }
 
   test("encode/decode PingResp") {
     val fh = FixedHeader()
     val pingResp = PingRespPacket(fh)
 
-    assert(Codec[Packet].encode(pingResp).require.bytes.size === 2)
-    assert(Codec[Packet].decode(Codec[Packet].encode(pingResp).require).require === DecodeResult(pingResp, bin""))
+    assert(Codec[ControlPacket].encode(pingResp).require.bytes.size === 2)
+    assert(Codec[ControlPacket].decode(Codec[ControlPacket].encode(pingResp).require).require === DecodeResult(pingResp, bin""))
   }
 
 }

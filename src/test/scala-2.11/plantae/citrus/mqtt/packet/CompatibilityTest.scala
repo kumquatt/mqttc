@@ -14,20 +14,20 @@ import scodec.bits._
 
 // compatibility test between Packet and DTO
 @RunWith(classOf[JUnitRunner])
-class DTOandPacketTest extends FunSuite {
+class CompatibilityTest extends FunSuite {
   test("Connect encode Test with dto") {
     val connect1ByDto = CONNECT(STRING("client1"), true, None, None, INT(60)).encode
 
     val fixedHeader = FixedHeader()
     val connectVariableHeader = ConnectVariableHeader(false, false, false, 0, false, true, 60)
-    val connect1ByPacket = Codec[Packet].encode(ConnectPacket(fixedHeader, connectVariableHeader, "client1", None, None, None, None)).require
+    val connect1ByPacket = Codec[ControlPacket].encode(ConnectPacket(fixedHeader, connectVariableHeader, "client1", None, None, None, None)).require
 
     assert(connect1ByPacket === BitVector(connect1ByDto))
   }
 
   test("Connect decode Test with dto") {
     val connect1ByDto = CONNECT(STRING("client1"), true, None, None, INT(60)).encode
-    val connect = Codec[Packet].decode(BitVector(connect1ByDto))
+    val connect = Codec[ControlPacket].decode(BitVector(connect1ByDto))
 
     assert(connect.isSuccessful === true)
     assert(connect.require.value.isInstanceOf[ConnectPacket] === true)
@@ -40,14 +40,14 @@ class DTOandPacketTest extends FunSuite {
     val connackByDto = CONNACK(true, BYTE(0)).encode
 
     val fh = FixedHeader()
-    val connackByPacket = Codec[Packet].encode(ConnAckPacket(fh, true, 0)).require
+    val connackByPacket = Codec[ControlPacket].encode(ConnAckPacket(fh, true, 0)).require
 
     assert(connackByPacket === BitVector(connackByDto))
   }
 
   test("Conack decode Test with dto") {
     val conackByDto = CONNACK(true, BYTE(1)).encode
-    val connack = Codec[Packet].decode(BitVector(conackByDto))
+    val connack = Codec[ControlPacket].decode(BitVector(conackByDto))
 
     assert(connack.isSuccessful === true)
     assert(connack.require.value.isInstanceOf[ConnAckPacket] === true)
@@ -79,12 +79,12 @@ class DTOandPacketTest extends FunSuite {
     val pubackDto = PUBACK(INT(12345))
     val pubackPacket = PubAckPacket(FixedHeader(), 12345)
 
-    val puback = Codec[Packet].decode(BitVector(pubackDto.encode))
+    val puback = Codec[ControlPacket].decode(BitVector(pubackDto.encode))
 
     assert(puback.isSuccessful === true)
     assert(puback.require === DecodeResult(pubackPacket, bin""))
 
-    val packet = Codec[Packet].encode(pubackPacket)
+    val packet = Codec[ControlPacket].encode(pubackPacket)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === BitVector(pubackDto.encode))
@@ -96,12 +96,12 @@ class DTOandPacketTest extends FunSuite {
     val pubcompDto = PUBCOMB(INT(12345))
     val pubcompPacket = PubCompPacket(FixedHeader(), 12345)
 
-    val pubcomp = Codec[Packet].decode(BitVector(pubcompDto.encode))
+    val pubcomp = Codec[ControlPacket].decode(BitVector(pubcompDto.encode))
 
     assert(pubcomp.isSuccessful === true)
     assert(pubcomp.require === DecodeResult(pubcompPacket, bin""))
 
-    val packet = Codec[Packet].encode(pubcompPacket)
+    val packet = Codec[ControlPacket].encode(pubcompPacket)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === BitVector(pubcompDto.encode))
@@ -112,12 +112,12 @@ class DTOandPacketTest extends FunSuite {
     val publishPacket = PublishPacket(fh, "test/topic", Some(12345), ByteVector("helloworld".getBytes))
     val publishDto = PUBLISH(true, INT(1), true, STRING("test/topic"), Some(INT(12345)), PUBLISHPAYLOAD("helloworld".getBytes))
 
-    val publish = Codec[Packet].decode(BitVector(publishDto.encode))
+    val publish = Codec[ControlPacket].decode(BitVector(publishDto.encode))
 
     assert(publish.isSuccessful === true)
     assert(publish.require === DecodeResult(publishPacket, bin""))
 
-    val packet = Codec[Packet].encode(publishPacket)
+    val packet = Codec[ControlPacket].encode(publishPacket)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === BitVector(publishDto.encode))
@@ -128,12 +128,12 @@ class DTOandPacketTest extends FunSuite {
     val pubrecDto = PUBREC(INT(12345))
     val pubrecPacket = PubRecPacket(FixedHeader(), 12345)
 
-    val pubrec = Codec[Packet].decode(BitVector(pubrecDto.encode))
+    val pubrec = Codec[ControlPacket].decode(BitVector(pubrecDto.encode))
 
     assert(pubrec.isSuccessful === true)
     assert(pubrec.require === DecodeResult(pubrecPacket, bin""))
 
-    val packet = Codec[Packet].encode(pubrecPacket)
+    val packet = Codec[ControlPacket].encode(pubrecPacket)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === BitVector(pubrecDto.encode))
@@ -143,12 +143,12 @@ class DTOandPacketTest extends FunSuite {
     val pubrelDto = PUBREL(INT(12345))
     val pubrelPacket = PubRelPacket(FixedHeader(qos=1), 12345)
 
-    val pubrel = Codec[Packet].decode(BitVector(pubrelDto.encode))
+    val pubrel = Codec[ControlPacket].decode(BitVector(pubrelDto.encode))
 
     assert(pubrel.isSuccessful === true)
     assert(pubrel.require === DecodeResult(pubrelPacket, bin""))
 
-    val packet = Codec[Packet].encode(pubrelPacket)
+    val packet = Codec[ControlPacket].encode(pubrelPacket)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === BitVector(pubrelDto.encode))
@@ -161,12 +161,12 @@ class DTOandPacketTest extends FunSuite {
     val subackPakcet = SubAckPacket(fh, 40293, topicFilter)
     val subackDto = SUBACK(INT(40293.toShort),List(BYTE(0), BYTE(1), BYTE(2), BYTE(80)))
 
-    val suback = Codec[Packet].decode(BitVector(subackDto.encode))
+    val suback = Codec[ControlPacket].decode(BitVector(subackDto.encode))
 
     assert(suback.isSuccessful === true)
     assert(suback.require === DecodeResult(subackPakcet, bin""))
 
-    val packet = Codec[Packet].encode(subackPakcet)
+    val packet = Codec[ControlPacket].encode(subackPakcet)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === BitVector(subackDto.encode))
@@ -181,12 +181,12 @@ class DTOandPacketTest extends FunSuite {
       TopicFilter(STRING("topic/1"), BYTE(0)),
       TopicFilter(STRING("topic/2"), BYTE(1)) ))
 
-    val subscribe = Codec[Packet].decode(BitVector(subscribeDto.encode))
+    val subscribe = Codec[ControlPacket].decode(BitVector(subscribeDto.encode))
 
     assert(subscribe.isSuccessful === true)
     assert(subscribe.require === DecodeResult(subscribePacket, bin""))
 
-    val packet = Codec[Packet].encode(subscribePacket)
+    val packet = Codec[ControlPacket].encode(subscribePacket)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === BitVector(subscribeDto.encode))
@@ -198,12 +198,12 @@ class DTOandPacketTest extends FunSuite {
     val unsubackPacket = UnsubAckPacket(fh, 12345)
     val unsubackDto = UNSUBACK(INT(12345))
 
-    val unsuback = Codec[Packet].decode(BitVector(unsubackDto.encode))
+    val unsuback = Codec[ControlPacket].decode(BitVector(unsubackDto.encode))
 
     assert(unsuback.isSuccessful === true)
     assert(unsuback.require === DecodeResult(unsubackPacket, bin""))
 
-    val packet = Codec[Packet].encode(unsubackPacket)
+    val packet = Codec[ControlPacket].encode(unsubackPacket)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === BitVector(unsubackDto.encode))
@@ -216,12 +216,12 @@ class DTOandPacketTest extends FunSuite {
     val unsubscribePacket = UnsubscribePacket(fh, 12345, topicFilter)
     val unsubscribeDto = UNSUBSCRIBE(INT(12345), List(STRING("topic/1"), STRING("topic/2"), STRING("topic/3")))
 
-    val unsubscribe = Codec[Packet].decode(BitVector(unsubscribeDto.encode))
+    val unsubscribe = Codec[ControlPacket].decode(BitVector(unsubscribeDto.encode))
 
     assert(unsubscribe.isSuccessful === true)
     assert(unsubscribe.require === DecodeResult(unsubscribePacket, bin""))
 
-    val packet = Codec[Packet].encode(unsubscribePacket)
+    val packet = Codec[ControlPacket].encode(unsubscribePacket)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === BitVector(unsubscribeDto.encode))

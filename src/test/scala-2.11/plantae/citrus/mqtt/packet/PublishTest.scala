@@ -14,7 +14,7 @@ class PublishTest extends FunSuite {
     val fh = FixedHeader(dup = false, qos = 1)
     val publishPacket = PublishPacket(fh, "test/topic", Some(12345), ByteVector("helloworld".getBytes))
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(publishPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(publishPacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(publishPacket, bin""))
@@ -34,7 +34,7 @@ class PublishTest extends FunSuite {
     val fh = FixedHeader(dup = true, qos = 1, retain = true)
     val publishPacket = PublishPacket(fh, "test/topic", Some(12345), ByteVector("helloworld".getBytes))
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(publishPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(publishPacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(publishPacket, bin""))
@@ -53,7 +53,7 @@ class PublishTest extends FunSuite {
     val fh = FixedHeader(dup = false, qos = 0)
     val publishPacket = PublishPacket(fh, "test/topic", None, ByteVector("helloworld".getBytes))
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(publishPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(publishPacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(publishPacket, bin""))
@@ -72,7 +72,7 @@ class PublishTest extends FunSuite {
     val fh = FixedHeader(dup = false, qos = 1)
     val publishPacket = PublishPacket(fh, "test/topic", Some(12345), ByteVector.empty)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(publishPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(publishPacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(publishPacket, bin""))
@@ -91,7 +91,7 @@ class PublishTest extends FunSuite {
     val fh = FixedHeader()
     val pubackPacket = PubAckPacket(fh, 12345)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(pubackPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(pubackPacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(pubackPacket, bin""))
@@ -105,7 +105,7 @@ class PublishTest extends FunSuite {
     val fh = FixedHeader()
     val pubrecPacket = PubRecPacket(fh, 12345)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(pubrecPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(pubrecPacket).require)
 
     assert(packet.isSuccessful === true)
 
@@ -120,7 +120,7 @@ class PublishTest extends FunSuite {
     val fh = FixedHeader()
     val pubrelPacket = PubRelPacket(fh, 12345)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(pubrelPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(pubrelPacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(pubrelPacket, bin""))
@@ -134,7 +134,7 @@ class PublishTest extends FunSuite {
     val fh = FixedHeader()
     val pubcompPacket = PubCompPacket(fh, 12345)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(pubcompPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(pubcompPacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(pubcompPacket, bin""))

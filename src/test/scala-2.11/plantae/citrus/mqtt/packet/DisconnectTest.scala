@@ -12,8 +12,8 @@ class DisconnectTest extends FunSuite {
     val fh = FixedHeader()
     val disconnect = DisconnectPacket(fh)
 
-    assert(Codec[Packet].encode(disconnect).require.bytes.size === 2)
-    assert(Codec[Packet].decode(Codec[Packet].encode(disconnect).require).require === DecodeResult(disconnect, bin""))
+    assert(Codec[ControlPacket].encode(disconnect).require.bytes.size === 2)
+    assert(Codec[ControlPacket].decode(Codec[ControlPacket].encode(disconnect).require).require === DecodeResult(disconnect, bin""))
   }
 
 }

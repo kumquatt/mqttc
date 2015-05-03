@@ -13,7 +13,7 @@ class ConnectTest extends FunSuite {
   test("encode connect packet") {
     val fh = FixedHeader()
     val cvh = ConnectVariableHeader(true, true, true, 0, true, true, 30000)
-    val connectPacket = Codec[Packet].encode(ConnectPacket(fh, cvh, "client_id", Some("testWillTopic"), Some("TestWillMessage"), Some("id"), Some("password")))
+    val connectPacket = Codec[ControlPacket].encode(ConnectPacket(fh, cvh, "client_id", Some("testWillTopic"), Some("TestWillMessage"), Some("id"), Some("password")))
 
     val a = connectPacket.require.toByteArray
     assert(connectPacket.isSuccessful === true)
@@ -22,7 +22,7 @@ class ConnectTest extends FunSuite {
       87, 105, 108, 108, 77, 101, 115, 115, 97, 103, 101, 0, 2, 105, 100, 0, 8, 112, 97, 115, 115, 119, 111, 114, 100)))
 
     val cvh2 = ConnectVariableHeader(false, false, false, 0, false, true, 60)
-    val connectPacket2 = Codec[Packet].encode(ConnectPacket(fh, cvh2, "client_id", None, None, None, None))
+    val connectPacket2 = Codec[ControlPacket].encode(ConnectPacket(fh, cvh2, "client_id", None, None, None, None))
 
     assert(connectPacket2.isSuccessful == true)
     assert(connectPacket2.require === BitVector(Array[Byte](16, 21, 0, 4, 77, 81, 84, 84, 4, 2, 0, 60, 0, 9, 99, 108, 105, 101, 110, 116,
@@ -34,7 +34,7 @@ class ConnectTest extends FunSuite {
     val encodedConnectPacket = Array[Byte](16, 21, 0, 4, 77, 81, 84, 84, 4, 2, 0, 60, 0, 9, 99, 108, 105, 101, 110, 116,
       95, 105, 100)
 
-    val packet = Codec[Packet].decode(BitVector(encodedConnectPacket))
+    val packet = Codec[ControlPacket].decode(BitVector(encodedConnectPacket))
 
     assert(packet.isSuccessful === true)
     assert(packet.require.value.isInstanceOf[ConnectPacket] === true)
@@ -48,7 +48,7 @@ class ConnectTest extends FunSuite {
     val minPacketVh = ConnectVariableHeader(false, false, false, 0, false, true, 60)
     val minPacket = ConnectPacket(minPacketFh, minPacketVh, "client_id", None, None, None, None)
 
-    val min = Codec[Packet].decode(Codec[Packet].encode(minPacket).require).require.value.asInstanceOf[ConnectPacket]
+    val min = Codec[ControlPacket].decode(Codec[ControlPacket].encode(minPacket).require).require.value.asInstanceOf[ConnectPacket]
 
     assert(min.clientId === "client_id")
     assert(min.variableHeader.keepAliveTime === 60)
@@ -57,7 +57,7 @@ class ConnectTest extends FunSuite {
     val min_idPacketVh = ConnectVariableHeader(true, false, false, 0, false, true, 60)
     val min_idPacket = ConnectPacket(min_idPacketFh, min_idPacketVh, "client_id", None, None, Some("id"), None)
 
-    val min_id = Codec[Packet].decode(Codec[Packet].encode(min_idPacket).require).require.value.asInstanceOf[ConnectPacket]
+    val min_id = Codec[ControlPacket].decode(Codec[ControlPacket].encode(min_idPacket).require).require.value.asInstanceOf[ConnectPacket]
 
     assert(min_id.clientId === "client_id")
     assert(min_id.userName === Some("id"))
@@ -67,7 +67,7 @@ class ConnectTest extends FunSuite {
     val min_passPacketVh = ConnectVariableHeader(true, true, false, 0, false, true, 60)
     val min_passPacket = ConnectPacket(min_passPacketFh, min_passPacketVh, "client_id", None, None, Some("id"), Some("password"))
 
-    val min_pass = Codec[Packet].decode(Codec[Packet].encode(min_passPacket).require).require.value.asInstanceOf[ConnectPacket]
+    val min_pass = Codec[ControlPacket].decode(Codec[ControlPacket].encode(min_passPacket).require).require.value.asInstanceOf[ConnectPacket]
 
     assert(min_pass.userName === Some("id"))
     assert(min_pass.password === Some("password"))
@@ -81,7 +81,7 @@ class ConnectTest extends FunSuite {
     val min_willPacketVh = ConnectVariableHeader(false, false, true, 2, true, false, 60)
     val min_willPacket = ConnectPacket(min_willPacketFh, min_willPacketVh, "client_id", Some("will_topic"), Some(will_message), None, None)
 
-    val min_will = Codec[Packet].decode(Codec[Packet].encode(min_willPacket).require).require.value.asInstanceOf[ConnectPacket]
+    val min_will = Codec[ControlPacket].decode(Codec[ControlPacket].encode(min_willPacket).require).require.value.asInstanceOf[ConnectPacket]
 
     assert(min_will.variableHeader.willQoS === 2)
     assert(min_will.willTopic === Some("will_topic"))
@@ -91,7 +91,7 @@ class ConnectTest extends FunSuite {
 
   test("Connack encode test") {
     val fh = FixedHeader()
-    val connack = Codec[Packet].encode(ConnAckPacket(fh, true, 1))
+    val connack = Codec[ControlPacket].encode(ConnAckPacket(fh, true, 1))
 
     assert(connack.isSuccessful === true)
     assert(connack.require === BitVector(hex"20020101"))
@@ -99,7 +99,7 @@ class ConnectTest extends FunSuite {
   }
 
   test("Connack decode test") {
-    val connack = Codec[Packet].decode(BitVector(hex"20020101"))
+    val connack = Codec[ControlPacket].decode(BitVector(hex"20020101"))
 
     assert(connack.isSuccessful === true)
     assert(connack.require.value.isInstanceOf[ConnAckPacket] === true)

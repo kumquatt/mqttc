@@ -14,7 +14,7 @@ class UnsubscribeTest extends FunSuite {
     val topicFilter = List[String]("topic/1", "topic/2", "topic/3")
     val unsubscribePacket = UnsubscribePacket(fh, 12345, topicFilter)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(unsubscribePacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(unsubscribePacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(unsubscribePacket, bin""))
@@ -27,7 +27,7 @@ class UnsubscribeTest extends FunSuite {
     val topicFilter = List[String]("topic/1", "topic/2", "topic/3")
     val unsubscribePacket = UnsubscribePacket(fh, 12345, topicFilter)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(unsubscribePacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(unsubscribePacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(unsubscribePacket, bin""))
@@ -43,7 +43,7 @@ class UnsubscribeTest extends FunSuite {
     val fh = FixedHeader()
     val unsubackPacket = UnsubAckPacket(fh, 12345)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(unsubackPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(unsubackPacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(unsubackPacket, bin""))
@@ -54,7 +54,7 @@ class UnsubscribeTest extends FunSuite {
     val fh = FixedHeader()
     val unsubackPacket = UnsubAckPacket(fh, 12345)
 
-    val packet = Codec[Packet].decode(Codec[Packet].encode(unsubackPacket).require)
+    val packet = Codec[ControlPacket].decode(Codec[ControlPacket].encode(unsubackPacket).require)
 
     assert(packet.isSuccessful === true)
     assert(packet.require === DecodeResult(unsubackPacket, bin""))
