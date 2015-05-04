@@ -7,11 +7,13 @@ import akka.io.{IO, Tcp}
 import akka.util.ByteString
 import plantae.citrus.mqttclient.api.Status
 import plantae.citrus.mqttclient.api._
+import scodec.bits.{ByteVector, BitVector}
 import scala.concurrent.duration.Duration
 import java.util.concurrent.TimeUnit
 
 
 case object TimeSignal
+case object MessageSignal
 
 object MqttClient {
   def props(host: String, port: Int, clientId: String, keepAliveTime: Int) = {
@@ -25,6 +27,7 @@ class MqttClient(host: String, port:Int,  clientId: String, keepAliveTime: Int) 
   var tcpsession: ActorRef = null
   var connectOption : Option[ConnectOption] = None
   var timer: Cancellable = null
+  var timer2: Cancellable = null
 
   import system.dispatcher
 
@@ -47,6 +50,7 @@ class MqttClient(host: String, port:Int,  clientId: String, keepAliveTime: Int) 
     case plantae.citrus.mqttclient.api.Connected => {
       log.info("client({}),host({}),connect succ,", clientId, address)
       timer = system.scheduler.schedule(Duration((keepAliveTime/2).toLong, TimeUnit.SECONDS), Duration(keepAliveTime.toLong, TimeUnit.SECONDS),self, TimeSignal)
+      timer2 = system.scheduler.schedule(Duration(3000.toLong, TimeUnit.SECONDS), Duration(3000.toLong, TimeUnit.SECONDS),self, MessageSignal)
       context become connected
       self ! Subscribe(List(TopicQosPair("a/b", 0), TopicQosPair(clientId, 0)), 1)
     }
@@ -64,6 +68,9 @@ class MqttClient(host: String, port:Int,  clientId: String, keepAliveTime: Int) 
 
   private def connected : Receive = {
     // Request From Client
+    case MessageSignal =>
+      log.info("client({}),host({}),message",clientId,address)
+      tcpsession ! Publish(clientId, ByteVector((clientId + "_" +System.currentTimeMillis()).getBytes()), 0, None, false)
     case TimeSignal =>
       log.info("client({}),host({}),need to send ping", clientId, address)
       tcpsession ! PingReq
