@@ -18,13 +18,14 @@ object KumquattClient extends App {
     println(usage)
 
   }else {
-    Range(1, 2000).foreach(
-      x => {
-        val host = args(0)
-        val port = args(1).toInt
-        val count = args(2).toInt
-        val time_wait = args(3).toInt
 
+    val host = args(0)
+    val port = args(1).toInt
+    val count = args(2).toInt
+    val time_wait = args(3).toInt
+
+    Range(1, count).foreach(
+      x => {
         val clientid = prefix + "_client_" + x
         val mqttclient = system.actorOf(MqttClient.props(host, port, clientid, 3600))
 //        val mqttclient = system.actorOf(MqttClient.props("broker.mqtt-dashboard.com", 1883, clientid, 3600))
