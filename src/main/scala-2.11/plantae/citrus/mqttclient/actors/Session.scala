@@ -28,15 +28,15 @@ class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor {
   def receive = notConnected
 
   private def notConnected: Receive = {
-    case CommandFailed(_: Connect) =>
+    case CommandFailed(x: Connect) =>
       listener ! "connect failed"
-      println("connect failed!!!")
+      println("connect failed!!! " + x)
       context stop self
 
     case c@Connected(remote, local) =>
       listener ! "CONNECTED"
       connection = sender
-      connection ! Register(self)
+      connection ! Register(self, false, true)
       context become connected
   }
 
