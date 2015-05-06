@@ -7,16 +7,19 @@ sealed trait MqttClientRequest
 case class Will(qos: Int, topic: String, message: String, retain: Boolean) {
   // assert qos must 0 ~ 2
 }
-case class TopicQosPair(topicName : String, qos : Int) {
+case class TopicQosPair(topicName : String, qos : Short) {
   // assert qos must 0 ~ 2
 }
 case class Topic(topicName : String)
+
+case class Authentication(userName: String, password : Option[String])
 
 case class ConnectOption(clientId: String,
                    cleanSession: Boolean,
                    will: Option[Will] = None,
                    userName: Option[String] = None,
                    password: Option[String] = None,
+                   authentication : Option[Authentication] = None,
                    keepAlive: Int) extends MqttClientRequest {
 //  assert(keepAlive >= 0 && keepAlive < 65536, "KeepAlive should be 0 ~ 655535")
 //  assert(!userName.isDefined && password.isDefined, "Password must defined with userName")
