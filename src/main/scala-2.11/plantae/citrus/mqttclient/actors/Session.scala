@@ -2,7 +2,7 @@ package plantae.citrus.mqttclient.actors
 
 import java.net.InetSocketAddress
 
-import akka.actor.{Actor, ActorRef, Props}
+import akka.actor.{ActorLogging, Actor, ActorRef, Props}
 import akka.io.{IO, Tcp}
 import akka.util.ByteString
 import plantae.citrus.mqtt.packet._
@@ -16,7 +16,7 @@ object Session {
     Props(classOf[Session], remote, replies)
 }
 
-class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor {
+class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor with ActorLogging {
 
   import Tcp._
   import context.system
@@ -30,7 +30,7 @@ class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor {
   private def notConnected: Receive = {
     case CommandFailed(x: Connect) =>
       listener ! "connect failed"
-      println("connect failed!!! " + x)
+      log.info("Connect Failed : {} ", x)
       context stop self
 
     case c@Connected(remote, local) =>
@@ -68,7 +68,7 @@ class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor {
       }
     }
     case CommandFailed(w: Write) =>
-      println("Somethign wrong!!!")
+      log.info("CommandFailed")
     case Received(data) =>
       // decode here!!!
       val controlPacket = Codec[ControlPacket].decode(BitVector(data.toArray[Byte]))
@@ -100,7 +100,8 @@ class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor {
 
     case "close" =>
       connection ! Close
-    case _: ConnectionClosed =>
+    case x: ConnectionClosed =>
+      log.error("**Connection closed {} ", x)
       listener ! Disconnected
       context stop self
   }

@@ -50,7 +50,7 @@ class MqttClient(host: String, port:Int,  clientId: String, keepAliveTime: Int) 
     case plantae.citrus.mqttclient.api.Connected => {
       log.info("client({}),host({}),connect succ,", clientId, address)
       timer = system.scheduler.schedule(Duration((keepAliveTime/2).toLong, TimeUnit.SECONDS), Duration(keepAliveTime.toLong, TimeUnit.SECONDS),self, TimeSignal)
-      timer2 = system.scheduler.schedule(Duration(60.toLong, TimeUnit.SECONDS), Duration(300.toLong, TimeUnit.SECONDS),self, MessageSignal)
+//      timer2 = system.scheduler.schedule(Duration(60.toLong, TimeUnit.SECONDS), Duration(300.toLong, TimeUnit.SECONDS),self, MessageSignal)
       context become connected
       self ! Subscribe(List(TopicQosPair("a/b", 0), TopicQosPair(clientId, 0)), 1)
     }
