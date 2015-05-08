@@ -30,7 +30,7 @@ class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor with 
   private def notConnected: Receive = {
     case CommandFailed(x: Connect) =>
       listener ! "connect failed"
-      log.info("Connect Failed : {} ", x)
+      log.debug("Connect Failed : {} ", x)
       context stop self
 
     case c@Connected(remote, local) =>
@@ -68,7 +68,7 @@ class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor with 
       }
     }
     case CommandFailed(w: Write) =>
-      log.info("CommandFailed")
+      log.debug("CommandFailed")
     case Received(data) =>
       // decode here!!!
       val controlPacket = Codec[ControlPacket].decode(BitVector(data.toArray[Byte]))
@@ -92,10 +92,10 @@ class Session(remote: InetSocketAddress, listener: ActorRef) extends Actor with 
           case p: PublishPacket =>
             listener ! MessageArrived(p.topic, p.payload)
           case x =>
-            println(x)
+            log.debug("{}", x)
         }
       } else {
-        println("something wrong!!")
+        log.debug("Something Wrong")
       }
 
     case "close" =>

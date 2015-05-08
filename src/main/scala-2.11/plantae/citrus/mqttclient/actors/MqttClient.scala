@@ -20,6 +20,7 @@ object MqttClient {
     Props(classOf[MqttClient], host, port, clientId, keepAliveTime)
   }
 }
+
 class MqttClient(host: String, port:Int,  clientId: String, keepAliveTime: Int) extends Actor with ActorLogging {
   val address = host + ":" + port
   val inetSocketAddress = new InetSocketAddress(host, port)
@@ -33,17 +34,17 @@ class MqttClient(host: String, port:Int,  clientId: String, keepAliveTime: Int) 
 
   def receive = {
     case coption : ConnectOption =>
-      log.info("client({}),host({}),set option for connection",clientId, address, coption)
+      log.debug("client({}),host({}),set option for connection",clientId, address, coption)
       connectOption = Some(coption)
     case Connect => {
-      log.info("client({}),host({}),try to connect", clientId, address)
+      log.debug("client({}),host({}),try to connect", clientId, address)
       // try to connect with coption
       tcpsession = system.actorOf(Session.props(inetSocketAddress, self))
 
 
     }
     case "CONNECTED" => {
-      log.info("client({}),host({}),connected!!", clientId, address)
+      log.debug("client({}),host({}),connected!!", clientId, address)
       tcpsession ! Connect(clientId, keepAliveTime)
     }
 
@@ -58,9 +59,9 @@ class MqttClient(host: String, port:Int,  clientId: String, keepAliveTime: Int) 
       log.info("client({}),host({}),connection fail,{}", clientId, address, reason.toString)
 
     case Status =>
-      log.info("client({}),host({}),status,notconnected",clientId, address)
+      log.debug("client({}),host({}),status,notconnected",clientId, address)
     case other : MqttClientRequest =>
-      log.info("client({}),host({}),client not connected,{}", other)
+      log.debug("client({}),host({}),client not connected,{}", other)
 
     case x =>
       log.info("client({}),host({}),client not connected,unknown event,({})", clientId, address, x)
@@ -69,27 +70,27 @@ class MqttClient(host: String, port:Int,  clientId: String, keepAliveTime: Int) 
   private def connected : Receive = {
     // Request From Client
     case MessageSignal =>
-      log.info("client({}),host({}),message",clientId,address)
+      log.debug("client({}),host({}),message",clientId,address)
       tcpsession ! Publish(clientId, ByteVector((clientId + "_" +System.currentTimeMillis()).getBytes()), 0, None, false)
     case TimeSignal =>
-      log.info("client({}),host({}),need to send ping", clientId, address)
+      log.debug("client({}),host({}),need to send ping", clientId, address)
       tcpsession ! PingReq
     case c : Connect =>
-      log.info("client({}),host({}),already connected", clientId, address)
+      log.debug("client({}),host({}),already connected", clientId, address)
     case Disconnect =>
       log.info("client({}),host({}),try to disconnect", clientId, address)
     case Status =>
-      log.info("client({}),host({}),status,connected", clientId, address)
+      log.debug("client({}),host({}),status,connected", clientId, address)
     case p : Publish => {
-      log.info("client({}),host({}),publish", clientId, address)
+      log.debug("client({}),host({}),publish", clientId, address)
       tcpsession ! p
     }
     case s : Subscribe => {
-      log.info("client({}),host({}),subscribe", clientId, address)
+      log.debug("client({}),host({}),subscribe", clientId, address)
       tcpsession ! s
     }
     case u : Unsubscribe => {
-      log.info("client({}),host({}),unsubscribe", clientId, address)
+      log.debug("client({}),host({}),unsubscribe", clientId, address)
       tcpsession ! u
     }
 
@@ -104,15 +105,15 @@ class MqttClient(host: String, port:Int,  clientId: String, keepAliveTime: Int) 
         log.info("client({}),host({}),connection fail,{}", clientId, address, reason.toString)
       case Disconnected => log.info("client({}),host({}),disconnect succ,", clientId, address)
       case Published(pid) =>
-        log.info("client({}),host({}),message publish succ,packetid({})",clientId, address, pid)
+        log.debug("client({}),host({}),message publish succ,packetid({})",clientId, address, pid)
       case MessageArrived(topic, payload) =>
         log.info("client({}),host({}),message arrived succ,(topic({})-payload({})",
                   clientId, address, topic, new String(payload.toArray))
       case Subscribed(topicResult, pid) =>
-        log.info("client({}),host({}),subscribe result succ,topicResult({})-packetid({})",
+        log.debug("client({}),host({}),subscribe result succ,topicResult({})-packetid({})",
                   clientId, address, topicResult, pid)
       case Unsubscribed(pid) =>
-        log.info("client({}),host({}),unsubscribe succ,packetid({})",
+        log.debug("client({}),host({}),unsubscribe succ,packetid({})",
                   clientId, address, pid)
     }
   }
